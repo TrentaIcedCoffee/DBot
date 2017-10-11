@@ -29,4 +29,4 @@ public class DBUtil {
 				certificate.getPassword());
 		return DriverManager.getConnection(url);
 	}
-}
+} 

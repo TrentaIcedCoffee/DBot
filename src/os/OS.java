@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.json.JSONObject;
 
@@ -61,7 +63,7 @@ public class OS {
 		Scanner scanner = new Scanner(System.in);
 		while (true) {
 			System.out.print("DBot > ");
-			input = scanner.nextLine();
+			input = scanner.nextLine().trim();
 			switch (input) {
 			case "push" :
 				try {
@@ -90,6 +92,13 @@ public class OS {
 			case "status" :
 				System.out.println(OSUtil.status());
 				break;
+			case "list" :
+				try {
+					System.out.println(String.join(", ", OSUtil.tableList()));
+				} catch (DebugException e) {
+					System.out.println(e.getMessage());
+				}
+				break;
 			case "version" :
 				System.out.println("version: " + versionString);
 				break;
@@ -102,7 +111,53 @@ public class OS {
 				scanner.close();
 				System.exit(0);
 			default :
-				System.out.println(String.format("%s is not recognized as a DBot command", input));
+				if (input.length() > 6 && input.substring(0, 6).equals("field ")) {
+					try {
+						String tableName = input.substring(6);
+						Set<String> tableSet = OSUtil.tableList().stream().collect(Collectors.toSet());
+						if (!tableSet.contains(tableName)) {
+							System.out.println(String.format("table %s not in database", tableName));
+							break;
+						}
+						System.out.println(String.join("\n", OSUtil.fieldList(tableName)));
+					} catch (DebugException e) {
+						e.printStackTrace();
+						System.out.println(e.getMessage());
+					}
+				} else if (input.length() > 3 && input.substring(0, 3).equals("vi ")) {
+					try {
+						int indexOfSpace = 3;
+						while (indexOfSpace < input.length()) {
+							if (input.charAt(indexOfSpace) == ' ') {
+								break;
+							}
+							indexOfSpace++;
+						}
+						if (indexOfSpace == input.length()) {
+							System.out.println(String.format("%s is not recognized as a DBot command", input));
+							break;
+						}
+						String tableName = input.substring(3, indexOfSpace);
+						String fieldName = input.substring(indexOfSpace + 1);
+						Set<String> tableSet = OSUtil.tableList().stream().collect(Collectors.toSet());
+						if (!tableSet.contains(tableName)) {
+							System.out.println(String.format("table %s not in database", tableName));
+							break;
+						}
+						Set<String> fieldSet = OSUtil.fieldList(tableName).stream().collect(Collectors.toSet());
+						if (!fieldSet.contains(fieldName)) {
+							System.out.println(String.format("field %s not in table %s", fieldName, tableName));
+							break;
+						}
+						// TODO: impl Vision
+							
+					} catch (DebugException e) {
+						e.printStackTrace();
+						System.out.println(e.getMessage());
+					}
+				} else {
+					System.out.println(String.format("%s is not recognized as a DBot command", input));
+				} 
 			}
 		}
 	}
@@ -162,6 +217,8 @@ public class OS {
 		sb.append("push : synchronize forward\n");
 		sb.append("pull : synchronize backward\n");
 		sb.append("status : current status of folder and database\n");
+		sb.append("list : view all tables in database\n");
+		sb.append("field <tableName> : view all columns in the table\n");
 		sb.append("help : view help info\n");
 		sb.append("version : view version info\n");
 		sb.append("exit : exit DBot");

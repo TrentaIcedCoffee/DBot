@@ -121,7 +121,7 @@ public class OSUtil {
 		return sb.toString();
 	}
 	
-	private List<String> tableList() throws DebugException {
+	public List<String> tableList() throws DebugException {
 		try {
 			List<String> tableList = new ArrayList<>();
 			Connection connection = DBUtil.connect(certificate);
@@ -132,12 +132,38 @@ public class OSUtil {
 				tableList.add(resultSet.getString(1));
 			}
 			
+			connection.close();
+			
 			return tableList;
 		} catch (SQLException e) {
 			throw new DebugException();
 		}
 	}
-		
+	
+	public List<String> fieldList(String tableName) throws DebugException {
+		try {
+			List<String> fieldList = new ArrayList<>();
+			Connection connection = DBUtil.connect(certificate);
+			PreparedStatement ps = connection.prepareStatement(queryShowColumnsFrom(tableName));
+			ResultSet resultSet = ps.executeQuery();
+			
+			while (resultSet.next()) {
+				fieldList.add(resultSet.getString(1));
+			}
+			
+			connection.close();
+			
+			return fieldList;
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+			throw new DebugException();
+		}
+	}
+	
+	private String queryShowColumnsFrom(String tableName) {
+		return "SHOW COLUMNS FROM `" + tableName + "`;";
+	}
+	
 	private String makeQueryShowTables() {
 		return "SHOW TABLES;";
 	}
