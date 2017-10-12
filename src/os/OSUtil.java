@@ -13,7 +13,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.json.JSONObject;
@@ -25,6 +27,7 @@ import exception.DebugException;
 import exception.RWException;
 import rw.Reader;
 import rw.Writer;
+import vision.VisionUtil;
 
 /**
  *	OSUtil
@@ -155,9 +158,45 @@ public class OSUtil {
 			
 			return fieldList;
 		} catch (SQLException e) {
+			throw new DebugException();
+		}
+	}
+	
+	public void vision(String tableName, String fieldName) throws DebugException {
+		Map<String, Integer> freqMapSelected = freqMapSelected(tableName, fieldName);
+		VisionUtil.pieChart(tableName, fieldName, freqMapSelected);
+	}
+	
+	private Map<String, Integer> freqMapSelected(String tableName, String fieldName) throws DebugException {
+		try {
+			Map<String, Integer> freqMapAll = new HashMap<>();
+			Map<String, Integer> freqMapSelected = new HashMap<>();
+			
+			Connection connection = DBUtil.connect(certificate);
+			PreparedStatement ps = connection.prepareStatement(querySelectFieldFromTable(tableName, fieldName));
+			ResultSet resultSet = ps.executeQuery();
+			
+			while (resultSet.next()) {
+				freqMapAll.put(resultSet.getString(1), freqMapAll.getOrDefault(resultSet.getString(1), 0) + 1);
+			}
+			
+			for (Map.Entry<String, Integer> entry : freqMapAll.entrySet()) {
+				if (entry.getValue() >= 5) {
+					freqMapSelected.put(entry.getKey(), entry.getValue());
+				}
+ 			}
+			
+			connection.close();
+			
+			return freqMapSelected;
+		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 			throw new DebugException();
 		}
+	}
+	
+	private String querySelectFieldFromTable(String tableName, String fieldName) {
+		return "SELECT `" + fieldName + "` FROM `" + tableName + "`;"; 
 	}
 	
 	private String queryShowColumnsFrom(String tableName) {

@@ -125,6 +125,7 @@ public class OS {
 						System.out.println(e.getMessage());
 					}
 				} else if (input.length() > 3 && input.substring(0, 3).equals("vi ")) {
+					// FIXME: ambiguous parse
 					try {
 						int indexOfSpace = 3;
 						while (indexOfSpace < input.length()) {
@@ -149,8 +150,7 @@ public class OS {
 							System.out.println(String.format("field %s not in table %s", fieldName, tableName));
 							break;
 						}
-						// TODO: impl Vision
-							
+						OSUtil.vision(tableName, fieldName);
 					} catch (DebugException e) {
 						e.printStackTrace();
 						System.out.println(e.getMessage());
@@ -219,6 +219,7 @@ public class OS {
 		sb.append("status : current status of folder and database\n");
 		sb.append("list : view all tables in database\n");
 		sb.append("field <tableName> : view all columns in the table\n");
+		sb.append("vi <tableName> <fieldName> : view piechart of selected values\n");
 		sb.append("help : view help info\n");
 		sb.append("version : view version info\n");
 		sb.append("exit : exit DBot");
