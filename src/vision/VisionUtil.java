@@ -14,6 +14,10 @@ import de.erichseifert.gral.ui.InteractivePanel;
 
 import javax.swing.JFrame;
 
+/**
+ * data visualization class
+ * @author Xin
+ */
 public class VisionUtil {
 	public static void pieChart(String tableName, String fieldName, Map<String, Integer> freqMapSelected) {
 		Frame frame = new VisionUtil.Frame(tableName, fieldName, freqMapSelected);

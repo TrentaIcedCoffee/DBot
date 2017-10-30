@@ -1,3 +1,5 @@
+// FIXME: ambiguous parse
+
 package os;
 
 import java.io.File;
@@ -37,7 +39,7 @@ public class OS {
 	}
 	
 	public static String rootString = "C:/DBot";
-	public static String versionString = "1.0.0";
+	public static String versionString = "1.3.1";
 	private String welcomeString;
 	private String helpString;
 	private Certificate certificate;

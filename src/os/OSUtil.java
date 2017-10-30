@@ -31,10 +31,8 @@ import vision.VisionUtil;
 
 /**
  *	OSUtil
- *	public OSUtil(JSONObject configJSON, Certificate certificate) throws DebugException
- *	public void syncForward() throws DebugException, RWException
- *	public void syncBackward() throws DebugException, RWException
- *	public String status()
+ *	methods class prepared for OS
+ *	@author Xin
  */
 public class OSUtil {
 	private Certificate certificate;
@@ -54,8 +52,7 @@ public class OSUtil {
 	}
 	
 	/**
-	 * push
-	 * TODO: impl multi-thread
+	 * push, impled multi-thread
 	 * @throws DebugException
 	 * @throws RWException
 	 */
@@ -67,8 +64,11 @@ public class OSUtil {
 						excel.getName().length() > 4 && 
 						excel.getName().substring(excel.getName().length() - 5, excel.getName().length()).equals(".xlsx")) {
 					try {
-						Reader reader = new Reader(excel, certificate);
-						reader.batchRead();
+						Thread thread = new Thread(new Reader(excel, certificate));
+						thread.start();
+						thread.join();
+					} catch (InterruptedException e) {
+						throw new DebugException();
 					} catch (InvalidFormatException e) {
 						throw new RWException(excel.getName() + " is not valid xlsx, please check file format");
 					} catch (IOException e) {
@@ -84,8 +84,7 @@ public class OSUtil {
 	}
 	
 	/**
-	 * pull
-	 * TODO: impl multi-thread
+	 * pull impled multi-thread
 	 * @throws DebugException
 	 * @throws RWException
 	 */
@@ -94,8 +93,11 @@ public class OSUtil {
 			List<String> tableList = tableList();
 			for (String tableName : tableList) {
 				try {
-					Writer writer = new Writer(folderFile, tableName, certificate);
-					writer.write();
+					Thread thread = new Thread(new Writer(folderFile, tableName, certificate));
+					thread.start();
+					thread.join();
+				} catch (InterruptedException e) {
+					throw new DebugException();
 				} catch (SQLException e) {
 					throw new RWException("error in writing file " + tableName + ", no further info provided");
 				}
@@ -124,6 +126,11 @@ public class OSUtil {
 		return sb.toString();
 	}
 	
+	/**
+	 * get all tables in db
+	 * @return tableList
+	 * @throws DebugException
+	 */
 	public List<String> tableList() throws DebugException {
 		try {
 			List<String> tableList = new ArrayList<>();
@@ -143,6 +150,12 @@ public class OSUtil {
 		}
 	}
 	
+	/**
+	 * get all fields of a table
+	 * @param tableName
+	 * @return fieldList
+	 * @throws DebugException
+	 */
 	public List<String> fieldList(String tableName) throws DebugException {
 		try {
 			List<String> fieldList = new ArrayList<>();
@@ -162,6 +175,12 @@ public class OSUtil {
 		}
 	}
 	
+	/**
+	 * visualize all data from a field of a table
+	 * @param tableName
+	 * @param fieldName
+	 * @throws DebugException
+	 */
 	public void vision(String tableName, String fieldName) throws DebugException {
 		Map<String, Integer> freqMapSelected = freqMapSelected(tableName, fieldName);
 		VisionUtil.pieChart(tableName, fieldName, freqMapSelected);
