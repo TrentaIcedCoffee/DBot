@@ -37,7 +37,7 @@ public class OS {
 	}
 	
 	public static String rootString = "C:/DBot";
-	public static String versionString = "0.0.0";
+	public static String versionString = "1.0.0";
 	private String welcomeString;
 	private String helpString;
 	private Certificate certificate;
