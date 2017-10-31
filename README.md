@@ -7,6 +7,9 @@ v 1.3.1
  - Java 8 runtime
  - MySQL 5.7
  - MySQL J connector
+ 
+### Download
+[DBot v 1.3.1](https://github.com/TrentaIcedCoffee/DBot/raw/master/DBot.jar)
 
 ### Configuration
 
