@@ -10,19 +10,19 @@ v 1.3.1
 
 ### Configuration
 
- - C:/Dbot/certificate.json
-	All information about your MySQL database.
+ - C:/Dbot/certificate.json  
+ 	All information about your MySQL database.  
 	host, port, database name, username and password
 		
- - C:/Dbot/config.json
-   All uri information about DBot
-   uri of certificate.json, working directory and status.json
+ - C:/Dbot/config.json  
+     All uri information about DBot  
+     uri of certificate.json, working directory and status.json
 	
- - working directory
-   The place to store all tables
+ - working directory  
+     The place to store all tables
    
- - status.json
-   push/pull status, can be auto generated
+ - status.json  
+     push/pull status, can be auto generated
 
 ### Usage
 
@@ -30,7 +30,7 @@ v 1.3.1
  - status
  - list
  - field tableName
- - vi tableName fieldName
+ - vi tableName fieldName  
    visualize all significant value in a field
 
  type 'help' to see all usages
